@@ -34,7 +34,7 @@ export async function POST(req) {
       const cloudinaryUrl = await uploadToCloudinary(imageBuffer);
 
       // Usar la URL de Cloudinary para OCR
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/ocr`, {
+      const res = await fetch(`http://mp-tasas.vercel.app/api/ocr`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: cloudinaryUrl }),
