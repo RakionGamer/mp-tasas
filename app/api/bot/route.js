@@ -90,11 +90,6 @@ export async function POST(req) {
           }
         };
         const processedImageUrlChile = await createImageWithRatesChileVenezuela(tasasVenezuela);
-        await bot.sendVideo(chatId, 'https://res.cloudinary.com/dvh3nrsun/video/upload/v1755501766/video.mp4');
-        await bot.sendPhoto(chatId, 'https://res.cloudinary.com/dvh3nrsun/image/upload/v1755501766/5_dxss6y.jpg');
-        await bot.sendPhoto(chatId, 'https://res.cloudinary.com/dvh3nrsun/image/upload/v1755501766/9_g3p26d.jpg');
-        await bot.sendPhoto(chatId, 'https://res.cloudinary.com/dvh3nrsun/image/upload/v1755501766/6_ljkvup.jpg');
-        await bot.sendVideo(chatId, 'https://res.cloudinary.com/dvh3nrsun/video/upload/v1755502045/Video_de_WhatsApp_2025-08-11_a_las_09.31.18_f7be8b92_fgttbl.mp4')
         await bot.sendPhoto(chatId, processedImageUrlChile, {
           caption: `Tasa procesada correctamente✅`
         });
@@ -120,13 +115,30 @@ export async function POST(req) {
 
       const data = await res.json();
       const texto = data.textoLimpio;
+      
+      console.log('Texto limpio: ', texto)
       const esCambios = /Cambios/.test(texto);
       const esEnvioChile = /ENVIO DESDE CHILE/.test(texto);
-      const esEnvioMexico = /ENVÍO DESDE MÉXICO/.test(texto);
+      const esEnvioChilexd = /ENVÍO DESDE CHILE/.test(texto);
+      const esEnvioChileTildexdd = /ENVIO DESDE CHÍLE/.test(texto);
+      const esEnvioChileTilde = /ENVÍO DESDE CHÍLE/.test(texto);
+
+
+      const esEnvioMexico = /ENVIO DESDE MEXICO/.test(texto);
+      const esEnvioMexicoSinTilde = /ENVÍO DESDE MÉXICO/.test(texto);
+      const esEnvioMexicoSinTildexd = /ENVÍO DESDE MEXICO/.test(texto);
+      const esEnvioMexicoSinTildexdd = /ENVIO DESDE MÉXICO/.test(texto);
+
+
       const esEnvioVenezuela = /Envios desde Venezuela/.test(texto);
       const esUsuarioPlus = /@Plusremesas/.test(texto);
-      const esEnvioChileTilde = /ENVÍO DESDE CHÍLE/.test(texto);
-      const esEnvioMexicoSinTilde = /ENVÍO DESDE MÉXICO/.test(texto);
+      
+      
+
+      console.log('Con tilde: ', esEnvioMexico);
+      console.log('Sin tilde: ', esEnvioMexicoSinTilde)
+
+
 
       if (esCambios) {
         const processedImageUrl = await createImageWithRates(data);
@@ -150,13 +162,13 @@ export async function POST(req) {
         });
 
 
-      } else if ((esEnvioChile || esEnvioChileTilde) && esUsuarioPlus) {
+      } else if ((esEnvioChile || esEnvioChileTilde || esEnvioChileTildexdd || esEnvioChilexd) && esUsuarioPlus) {
         const processedImageUrlChile = await createImageWithRatesChile(data);
         await bot.sendPhoto(chatId, processedImageUrlChile, {
           caption: '✅Tasas de cambio actualizadas. Envíos desde Chile a'
         });
 
-      } else if ((esEnvioMexico || esEnvioMexicoSinTilde) && esUsuarioPlus) {
+      } else if ((esEnvioMexico || esEnvioMexicoSinTilde || esEnvioMexicoSinTildexd || esEnvioMexicoSinTildexdd) && esUsuarioPlus) {
         const processedImageUrlMexico = await createImageWithRatesMexico(data);
         await bot.sendPhoto(chatId, processedImageUrlMexico, {
           caption: '✅Tasas de cambio actualizadas. Envíos desde Mexico a'
