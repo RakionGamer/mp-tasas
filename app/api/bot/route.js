@@ -131,6 +131,7 @@ export async function POST(req) {
 
 
       const esEnvioVenezuela = /Envios desde Venezuela/.test(texto);
+      const esEnvioVenezuelaXd = /Envio desde Venezuela/.test(texto);
       const esUsuarioPlus = /@Plusremesas/.test(texto);
       
       
@@ -163,7 +164,7 @@ export async function POST(req) {
           caption: '✅Tasas de cambio actualizadas. Envíos desde Mexico a'
         });
 
-      } else if (esEnvioVenezuela) {
+      } else if (esEnvioVenezuela || esEnvioVenezuelaXd) {
         const processedImageUrlVenezuela = await createImageWithRatesVenezuela(data);
         await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
           caption: '✅Tasas de cambio actualizadas. Envíos desde Venezuela a'
@@ -220,6 +221,7 @@ async function uploadToCloudinary(imageBuffer) {
     stream.end(imageBuffer);
   });
 }
+
 
 
 
