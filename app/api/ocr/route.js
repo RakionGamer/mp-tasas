@@ -21,6 +21,8 @@ export async function POST(request) {
     const textoLimpio = limpiarTextoTasasAvanzado(parsed);
     const numeros = extraerNumerosAvanzado(textoLimpio);
 
+    console.log('Numeros extraídos:', numeros);
+
     return NextResponse.json({ parsedText: parsed, textoLimpio, numeros, raw: json });
   } catch (err) {
     console.error('OCR error:', err);
