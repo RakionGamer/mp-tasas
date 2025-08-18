@@ -145,24 +145,10 @@ export async function POST(req) {
         const processedImageUrlChile = await createImageWithRatesChile(data);
         const processedImageUrlMexico = await createImageWithRatesMexico(data);
         const processedImageUrlVenezuela = await createImageWithRatesVenezuela(data);
-        
-
-        await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
-          caption: '✅Tasas de cambio actualizadas. Envíos desde Venezuela a'
-        });
-
-        
-
-        await bot.sendPhoto(chatId, processedImageUrlMexico, {
-          caption: '✅Tasas de cambio actualizadas. Envíos desde Mexico a'
-        });
-        await bot.sendPhoto(chatId, processedImageUrl, {
-          caption: '✅Tasas de cambio actualizadas. Envíos a Venezuela desde'
-        });
 
         await bot.sendPhoto(chatId, processedImageUrlChile, {
           caption: '✅Tasas de cambio actualizadas. Envíos desde Chile a'
-        }
+        });
 
 
       } else if ((esEnvioChile || esEnvioChileTilde || esEnvioChileTildexdd || esEnvioChilexd) && esUsuarioPlus) {
@@ -234,6 +220,7 @@ async function uploadToCloudinary(imageBuffer) {
     stream.end(imageBuffer);
   });
 }
+
 
 
 
