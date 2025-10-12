@@ -21,8 +21,6 @@ export async function POST(request) {
       throw new Error(`No se pudo descargar la imagen: ${imageResp.status}`);
     const arrayBuffer = await imageResp.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
-
-    // 4) Contenido: primero la imagen, luego la instrucción (coloca la instrucción DESPUÉS de la imagen)
     const contents = [
       {
         inlineData: {
@@ -68,3 +66,4 @@ export async function POST(request) {
     );
   }
 }
+
