@@ -79,7 +79,7 @@ export async function POST(req) {
     };
 
     if (body.message?.text === "⚡ Generar Tasas Speed") {
-      await bot.sendMessage(chatId, "⚡ Generando tasas Speed...", keyboard);
+      await bot.sendMessage(chatId, "⚡ Generando Tasas Speed...", keyboard);
       const processedImageUrl = await createImageWithRates(
         paisesAVenezuela,
         {}
@@ -342,4 +342,5 @@ async function uploadToCloudinary(imageBuffer) {
     stream.end(imageBuffer);
   });
 }
+
 
