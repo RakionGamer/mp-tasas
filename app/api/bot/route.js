@@ -185,7 +185,7 @@ export async function POST(req) {
           };
 
           const processedImageUrlChile =
-            await createImageWithRatesChileVenezuela({}, tasasVenezuela);
+            await createImageWithRatesChileVenezuela(tasasVenezuela);
           await bot.sendPhoto(chatId, processedImageUrlChile, {
             caption: `Tasa procesada correctamente ✅`,
             ...keyboard,
@@ -342,5 +342,6 @@ async function uploadToCloudinary(imageBuffer) {
     stream.end(imageBuffer);
   });
 }
+
 
 
