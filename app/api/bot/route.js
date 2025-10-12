@@ -223,7 +223,7 @@ export async function POST(req) {
         const imageBuffer = await downloadImageFromTelegram(fileUrl);
         const cloudinaryUrl = await uploadToCloudinary(imageBuffer);
 
-        const res = await fetch(`https://c558c65807fd.ngrok-free.app/api/ocr`, {
+        const res = await fetch(`https://mp-tasas.vercel.app/api/ocr`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url: cloudinaryUrl }),
@@ -342,3 +342,4 @@ async function uploadToCloudinary(imageBuffer) {
     stream.end(imageBuffer);
   });
 }
+
