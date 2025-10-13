@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import { GoogleGenAI } from "@google/genai";
-import {
-  limpiarTextoTasasAvanzado,
-  extraerNumerosAvanzado,
-} from "../../../lib/cleaner";
+import { validarTasasPorCantidad } from "../../../lib/cleaner";
 
 export async function POST(request) {
   try {
@@ -11,9 +8,7 @@ export async function POST(request) {
     if (!url)
       return NextResponse.json({ error: "No se envió URL" }, { status: 400 });
 
-    
     const GEMINI_API_KEY = "AIzaSyCGoa4cH1XLUe2zCYJecHbEh6ihxL6k4RY";
-
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
     const imageResp = await fetch(url);
@@ -21,6 +16,25 @@ export async function POST(request) {
       throw new Error(`No se pudo descargar la imagen: ${imageResp.status}`);
     const arrayBuffer = await imageResp.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
+
+    const prompt = `
+Eres un sistema OCR avanzado. Analiza la imagen y genera un JSON estructurado de esta forma:
+{
+  "tasas": {
+    "<pais>": "<valor>",
+    ...
+  },
+  "otros_textos": ["<texto extra1>", "<texto extra2>", ...]
+}
+
+Reglas obligatorias:
+- "tasas" debe contener solo pares país-valor numérico (decimales completos o enteros), también qué este conformado por una coma.
+- "otros_textos" incluye todo el texto que no sea una tasa (títulos, fechas, URLs, etc).
+- Devuelve **únicamente JSON válido**, sin explicaciones, sin texto adicional, sin comentarios.
+- Si encuentras "Estados Unidos" o "USA", usa "USA" como clave.
+- Si encuentras "Brasil" o "Brazil", usa "Brasil" como clave.
+`;
+
     const contents = [
       {
         inlineData: {
@@ -28,9 +42,7 @@ export async function POST(request) {
           data: base64,
         },
       },
-      {
-        text: "Extrae TODO el texto de esta imagen. Devuélvelo solo como texto plano, sin explicaciones.",
-      },
+      { text: prompt },
     ];
 
     const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
@@ -39,7 +51,7 @@ export async function POST(request) {
       contents,
     });
 
-    const parsedText =
+    let parsedText =
       result?.text ??
       (Array.isArray(result?.output)
         ? result.output
@@ -47,16 +59,22 @@ export async function POST(request) {
             .join("\n")
         : "");
 
-    const textoLimpio = limpiarTextoTasasAvanzado(parsedText);
-    const numeros = extraerNumerosAvanzado(textoLimpio);
+    let jsonLimpio;
+    try {
+      jsonLimpio = JSON.parse(parsedText);
+    } catch {
+      const match = parsedText.match(/\{[\s\S]*\}/);
+      jsonLimpio = match
+        ? JSON.parse(match[0])
+        : { tasas: {}, otros_textos: [] };
+    }
 
-    console.log("Numeros extraídos (Gemini):", numeros);
+
+    const tasasValidadas = await validarTasasPorCantidad(jsonLimpio);
 
     return NextResponse.json({
-      parsedText,
-      textoLimpio,
-      numeros,
-      raw: result,
+      tasasValidadas,
+      otros_textos: jsonLimpio.otros_textos || [],
     });
   } catch (err) {
     console.error("OCR (Gemini) error:", err);
@@ -66,4 +84,3 @@ export async function POST(request) {
     );
   }
 }
-
