@@ -18,7 +18,7 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token);
 
 export async function POST(req) {
-  let chatId; // Store chatId at function scope for error handler
+  let chatId;
   try {
     const rates = await getRates();
     const ecuadorRates = rates["DESDE ECUADOR"];
@@ -79,7 +79,7 @@ export async function POST(req) {
     };
 
     if (body.message?.text === "⚡ Generar Tasas Speed") {
-      await bot.sendMessage(chatId, "⚡ Generando Tasas Speed...", keyboard);
+      await bot.sendMessage(chatId, "⚡ Generando tasas Speed...", keyboard);
       const processedImageUrl = await createImageWithRates(
         paisesAVenezuela,
         {}
@@ -100,7 +100,7 @@ export async function POST(req) {
 
       const processedImageUrlMexico = await createImageWithRatesMexico(
         mexicoRates,
-        {},
+        {}
       );
       await bot.sendPhoto(chatId, processedImageUrlMexico, {
         caption: "✅ Tasas actualizadas. Envíos desde México a",
@@ -230,26 +230,23 @@ export async function POST(req) {
         });
 
         if (!res.ok) throw new Error(`OCR API error: ${res.status}`);
-
         const data = await res.json();
-        if (!data?.textoLimpio) throw new Error("OCR no devolvió texto limpio");
+        const otrosTextos = data.tasasValidadas?.otros_textos || [];
+        const texto = otrosTextos.join(" ");
 
-        const texto = data.textoLimpio;
-        console.log("Texto limpio:", texto);
+        console.log('Datos extraídos: ', data);
 
-        const esCambios = /Cambios/.test(texto);
-        const esEnvioChile =
-          /ENVIO DESDE CHILE/.test(texto) || /ENVÍO DESDE CHILE/.test(texto);
-        const esEnvioMexico =
-          /ENVIO DESDE MEXICO/.test(texto) || /ENVÍO DESDE MÉXICO/.test(texto);
-        const esEnvioVenezuela =
-          /Envios desde Venezuela/.test(texto) ||
-          /Envio desde Venezuela/.test(texto);
+        console.log("Textos encontrados:", texto); 
+
+        const esCambios = /Cambio/i.test(texto);
+        const esEnvioChile = /ENV[IÍ]O DESDE CHILE/i.test(texto);
+        const esEnvioMexico = /ENV[IÍ]O DESDE M[EÉ]XICO/i.test(texto);
+        const esEnvioVenezuela = /Env[ií]os? desde Venezuela/i.test(texto);
 
         if (esCambios || esEnvioChile) {
           const processedImageUrlChile = await createImageWithRatesChile(
             {},
-            data
+            data.tasasValidadas
           );
           await bot.sendPhoto(chatId, processedImageUrlChile, {
             caption: "✅ Tasas actualizadas. Envíos desde Chile a",
@@ -258,7 +255,7 @@ export async function POST(req) {
         } else if (esEnvioMexico) {
           const processedImageUrlMexico = await createImageWithRatesMexico(
             {},
-            data
+            data.tasasValidadas
           );
           await bot.sendPhoto(chatId, processedImageUrlMexico, {
             caption: "✅ Tasas actualizadas. Envíos desde México a",
@@ -266,13 +263,16 @@ export async function POST(req) {
           });
         } else if (esEnvioVenezuela) {
           const processedImageUrlVenezuela =
-            await createImageWithRatesVenezuela({}, data);
+            await createImageWithRatesVenezuela({}, data.tasasValidadas);
           await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
             caption: "✅ Tasas actualizadas. Envíos desde Venezuela a",
             ...keyboard,
           });
         } else {
-          const processedImageUrl = await createImageWithRates({}, data);
+          const processedImageUrl = await createImageWithRates(
+            {},
+            data.tasasValidadas
+          );
           await bot.sendPhoto(chatId, processedImageUrl, {
             caption: "✅ Tasas actualizadas. Envíos a Venezuela desde",
             ...keyboard,
@@ -294,7 +294,6 @@ export async function POST(req) {
   } catch (err) {
     console.error("Bot error general:", err);
     try {
-      // Use chatId from outer scope instead of reading req.json() again
       if (chatId) {
         await bot.sendMessage(
           chatId,
@@ -342,6 +341,3 @@ async function uploadToCloudinary(imageBuffer) {
     stream.end(imageBuffer);
   });
 }
-
-
-
