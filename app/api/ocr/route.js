@@ -8,7 +8,7 @@ export async function POST(request) {
     if (!url)
       return NextResponse.json({ error: "No se envió URL" }, { status: 400 });
 
-    const GEMINI_API_KEY = "AIzaSyCGoa4cH1XLUe2zCYJecHbEh6ihxL6k4RY";
+    const GEMINI_API_KEY = "AIzaSyBn7bskscJ-ZaNt3mi3ymG4hKTUVGp3t8c";
     const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
     const imageResp = await fetch(url);
@@ -84,4 +84,5 @@ Reglas obligatorias:
     );
   }
 }
+
 
