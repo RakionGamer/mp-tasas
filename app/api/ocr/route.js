@@ -45,7 +45,7 @@ Reglas obligatorias:
       { text: prompt },
     ];
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-pro";
     const result = await ai.models.generateContent({
       model,
       contents,
@@ -84,3 +84,4 @@ Reglas obligatorias:
     );
   }
 }
+
