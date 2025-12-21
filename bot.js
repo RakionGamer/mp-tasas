@@ -1,7 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 import fetch from "node-fetch";
 
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN || "8053119867:AAG1vVTjrgAUlj0DTYeGKfYzDthLXmHNt2I";
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN || "8411844758:AAHVWw4Zvuy2mwxBEfDlvgR2cERwLLSbyuI";
 const OCR_API_URL = process.env.OCR_API_URL || "http://localhost:3000/api/ocr"; // tu Next.js
 
 // Crear el bot
@@ -56,3 +56,4 @@ bot.on("message", async (msg) => {
     bot.sendMessage(chatId, "❌ Hubo un error procesando la imagen.");
   }
 });
+
