@@ -11,6 +11,7 @@ const MODELOS_FALLBACK = [
 async function llamarGeminiConFallback(
   ai,
   contents,
+  instruccionesDelSistema,
   maxReintentosPorModelo = 2
 ) {
   let ultimoError = null;
@@ -22,10 +23,14 @@ async function llamarGeminiConFallback(
       try {
         const result = await ai.models.generateContent({
           model: modelo,
-          contents,
+          contents: contents,
+          config: {
+            systemInstruction: instruccionesDelSistema,
+            responseMimeType: "application/json",
+          }
         });
 
-        console.log(`✅ Éxito con ${modelo} (intento ${intento + 1})`);
+        console.log(`Éxito con ${modelo} (intento ${intento + 1})`);
         return { result, modeloUsado: modelo };
       } catch (error) {
         ultimoError = error;
@@ -45,7 +50,7 @@ async function llamarGeminiConFallback(
           await new Promise((resolve) => setTimeout(resolve, espera));
         } else if (esUltimoIntento) {
           console.log(
-            `⚠️ Agotados los reintentos para ${modelo}, probando siguiente modelo...`
+            `Agotados los reintentos para ${modelo}, probando siguiente modelo...`
           );
           break;
         } else {
@@ -85,7 +90,7 @@ export async function POST(request) {
     const arrayBuffer = await imageResp.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
 
-    const prompt = `
+    const promptDelSistema = `
 Eres un sistema OCR avanzado. Analiza la imagen y genera un JSON estructurado de esta forma:
 {
   "tasas": {
@@ -109,11 +114,14 @@ Reglas obligatorias:
           mimeType: imageResp.headers.get("content-type") || "image/jpeg",
           data: base64,
         },
-      },
-      { text: prompt },
+      }
     ];
 
-    const { result, modeloUsado } = await llamarGeminiConFallback(ai, contents);
+    const { result, modeloUsado } = await llamarGeminiConFallback(
+      ai, 
+      contents, 
+      promptDelSistema
+    );
 
     let parsedText =
       result?.text ??
@@ -173,4 +181,3 @@ Reglas obligatorias:
     );
   }
 }
-
