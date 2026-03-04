@@ -101,7 +101,7 @@ Eres un sistema OCR avanzado. Analiza la imagen y genera un JSON estructurado de
 }
 
 Reglas obligatorias:
-- "tasas" debe contener solo pares país-valor numérico (decimales completos o enteros), también que esté conformado por una coma.
+- "tasas" debe contener solo pares país-valor numérico (decimales completos o enteros), qué esté conformado por una coma el decimal.
 - "otros_textos" incluye todo el texto que no sea una tasa (títulos, fechas, URLs, etc).
 - Devuelve **únicamente JSON válido**, sin explicaciones, sin texto adicional, sin comentarios.
 - Si encuentras "Estados Unidos" o "USA", usa "USA" como clave.
@@ -181,3 +181,4 @@ Reglas obligatorias:
     );
   }
 }
+
