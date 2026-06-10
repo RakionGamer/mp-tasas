@@ -276,32 +276,7 @@ export async function POST(req) {
         const esEnvioPeru = /desde\s+per[uú]/i.test(texto);
         const esEnvioColombia = /desde\s+colombia/i.test(texto);
 
-        if (esCambios || esEnvioChile) {
-          const processedImageUrlChile = await createImageWithRatesChile(
-            {},
-            data.tasasValidadas
-          );
-          await bot.sendPhoto(chatId, processedImageUrlChile, {
-            caption: "✅ Tasas actualizadas. Envíos desde Chile a",
-            ...keyboard,
-          });
-        } else if (esEnvioMexico) {
-          const processedImageUrlMexico = await createImageWithRatesMexico(
-            {},
-            data.tasasValidadas
-          );
-          await bot.sendPhoto(chatId, processedImageUrlMexico, {
-            caption: "✅ Tasas actualizadas. Envíos desde México a",
-            ...keyboard,
-          });
-        } else if (esEnvioVenezuela) {
-          const processedImageUrlVenezuela =
-            await createImageWithRatesVenezuela({}, data.tasasValidadas);
-          await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
-            caption: "✅ Tasas actualizadas. Envíos desde Venezuela a",
-            ...keyboard,
-          });
-        } else if (esEnvioBrasil) {
+        if (esEnvioBrasil) {
           const processedImageUrlBrasil = await createImageWithRatesBrasil(
             {},
             data.tasasValidadas
@@ -326,6 +301,31 @@ export async function POST(req) {
           );
           await bot.sendPhoto(chatId, processedImageUrlColombia, {
             caption: "✅ Tasas actualizadas. Envíos desde Colombia a",
+            ...keyboard,
+          });
+        } else if (esEnvioMexico) {
+          const processedImageUrlMexico = await createImageWithRatesMexico(
+            {},
+            data.tasasValidadas
+          );
+          await bot.sendPhoto(chatId, processedImageUrlMexico, {
+            caption: "✅ Tasas actualizadas. Envíos desde México a",
+            ...keyboard,
+          });
+        } else if (esEnvioVenezuela) {
+          const processedImageUrlVenezuela =
+            await createImageWithRatesVenezuela({}, data.tasasValidadas);
+          await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
+            caption: "✅ Tasas actualizadas. Envíos desde Venezuela a",
+            ...keyboard,
+          });
+        } else if (esCambios || esEnvioChile) {
+          const processedImageUrlChile = await createImageWithRatesChile(
+            {},
+            data.tasasValidadas
+          );
+          await bot.sendPhoto(chatId, processedImageUrlChile, {
+            caption: "✅ Tasas actualizadas. Envíos desde Chile a",
             ...keyboard,
           });
         } else {
