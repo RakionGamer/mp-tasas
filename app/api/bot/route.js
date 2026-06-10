@@ -6,6 +6,9 @@ import { createImageWithRatesChile } from "@/lib/imageProcessorChile.js";
 import { createImageWithRatesMexico } from "@/lib/imageProcessorMexico.js";
 import { createImageWithRatesVenezuela } from "@/lib/imageProcessorVenezuela.js";
 import { createImageWithRatesChileVenezuela } from "@/lib/imageProcessorChileVenezuela.js";
+import { createImageWithRatesBrasil } from "@/lib/imageProcessorBrasil.js";
+import { createImageWithRatesPeru } from "@/lib/imageProcessorPeru.js";
+import { createImageWithRatesColombia } from "@/lib/imageProcessorColombia.js";
 import { getRates } from "@/lib/harryTasas.js";
 
 cloudinary.v2.config({
@@ -113,6 +116,33 @@ export async function POST(req) {
 
       await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
         caption: "✅ Tasas actualizadas. Envíos desde Venezuela a",
+        ...keyboard,
+      });
+
+      const processedImageUrlBrasil = await createImageWithRatesBrasil(
+        brasilRates,
+        {}
+      );
+      await bot.sendPhoto(chatId, processedImageUrlBrasil, {
+        caption: "✅ Tasas actualizadas. Envíos desde Brasil a",
+        ...keyboard,
+      });
+
+      const processedImageUrlPeru = await createImageWithRatesPeru(
+        peruRates,
+        {}
+      );
+      await bot.sendPhoto(chatId, processedImageUrlPeru, {
+        caption: "✅ Tasas actualizadas. Envíos desde Peru a",
+        ...keyboard,
+      });
+
+      const processedImageUrlColombia = await createImageWithRatesColombia(
+        colombiaRates,
+        {}
+      );
+      await bot.sendPhoto(chatId, processedImageUrlColombia, {
+        caption: "✅ Tasas actualizadas. Envíos desde Colombia a",
         ...keyboard,
       });
 
@@ -236,12 +266,15 @@ export async function POST(req) {
 
         console.log('Datos extraídos: ', data);
 
-        console.log("Textos encontrados:", texto); 
+        console.log("Textos encontrados:", texto);
 
         const esCambios = /Cambio/i.test(texto);
         const esEnvioChile = /ENV[IÍ]O DESDE CHILE/i.test(texto);
         const esEnvioMexico = /ENV[IÍ]O DESDE M[EÉ]XICO/i.test(texto);
         const esEnvioVenezuela = /Env[ií]os? desde Venezuela/i.test(texto);
+        const esEnvioBrasil = /ENV[IÍ]OS DESDE BRASIL/i.test(texto);
+        const esEnvioPeru = /ENV[IÍ]OS DESDE PER[UÚ]/i.test(texto);
+        const esEnvioColombia = /ENV[IÍ]OS DESDE COLOMBIA/i.test(texto);
 
         if (esCambios || esEnvioChile) {
           const processedImageUrlChile = await createImageWithRatesChile(
@@ -266,6 +299,33 @@ export async function POST(req) {
             await createImageWithRatesVenezuela({}, data.tasasValidadas);
           await bot.sendPhoto(chatId, processedImageUrlVenezuela, {
             caption: "✅ Tasas actualizadas. Envíos desde Venezuela a",
+            ...keyboard,
+          });
+        } else if (esEnvioBrasil) {
+          const processedImageUrlBrasil = await createImageWithRatesBrasil(
+            {},
+            data.tasasValidadas
+          );
+          await bot.sendPhoto(chatId, processedImageUrlBrasil, {
+            caption: "✅ Tasas actualizadas. Envíos desde Brasil a",
+            ...keyboard,
+          });
+        } else if (esEnvioPeru) {
+          const processedImageUrlPeru = await createImageWithRatesPeru(
+            {},
+            data.tasasValidadas
+          );
+          await bot.sendPhoto(chatId, processedImageUrlPeru, {
+            caption: "✅ Tasas actualizadas. Envíos desde Peru a",
+            ...keyboard,
+          });
+        } else if (esEnvioColombia) {
+          const processedImageUrlColombia = await createImageWithRatesColombia(
+            {},
+            data.tasasValidadas
+          );
+          await bot.sendPhoto(chatId, processedImageUrlColombia, {
+            caption: "✅ Tasas actualizadas. Envíos desde Colombia a",
             ...keyboard,
           });
         } else {
