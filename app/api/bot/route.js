@@ -271,7 +271,8 @@ export async function POST(req) {
         const esCambios = /Cambio/i.test(texto);
         const esEnvioChile = /ENV[IÍ]O DESDE CHILE/i.test(texto);
         const esEnvioMexico = /ENV[IÍ]O DESDE M[EÉ]XICO/i.test(texto);
-        const esEnvioVenezuela = /Env[ií]os? desde Venezuela/i.test(texto);
+        const esEnvioVenezuela = /Env[ií]os? desde Venezuela( a)?/i.test(texto);
+        
         const esEnvioBrasil = /desde\s+brasil/i.test(texto);
         const esEnvioPeru = /desde\s+per[uú]/i.test(texto);
         const esEnvioColombia = /desde\s+colombia/i.test(texto);
